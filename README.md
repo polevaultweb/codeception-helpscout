@@ -58,6 +58,9 @@ openNextUnreadEmail()
 ```
 Pops the most recent unread email and assigns it as the email to conduct tests on
 
+```waitForEmailFromSender()```
+Waits for an email to arrive from a specific email address
+
 ### Usage
 
 ```php
