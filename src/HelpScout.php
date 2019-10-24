@@ -7,6 +7,7 @@ use HelpScout\Api\ApiClientFactory;
 use HelpScout\Api\Conversations\ConversationFilters;
 use HelpScout\Api\Conversations\ConversationRequest;
 use HelpScout\Api\Conversations\EmailConversation;
+use PHPUnit\Framework\Assert;
 
 class HelpScout extends Module {
 
@@ -255,5 +256,40 @@ class HelpScout extends Module {
 	 */
 	public function dontHaveEmailEmail( $email ) {
 		$this->client->conversations()->delete( $email->getId() );
+	}
+
+	/**
+	 * @param int $timeout_in_second
+	 * @param int $interval_in_millisecond
+	 *
+	 * @return ModuleWait
+	 */
+	protected function wait( $timeout_in_second = 30, $interval_in_millisecond = 250 ) {
+		return new ModuleWait( $this, $timeout_in_second, $interval_in_millisecond );
+	}
+
+	/**
+	 * Wait until an email to be received from a specific sender email address.
+	 *
+	 * @param  int   $mailboxID
+	 * @param string $emailAddress
+	 * @param int    $timeout
+	 */
+	public function waitForEmailFromSender( $mailboxID, $emailAddress, $timeout = 5 ) {
+		$condition = function () use ( $mailboxID, $emailAddress ) {
+			$this->fetchEmails( $mailboxID );
+			foreach ( $this->fetchedEmails as $email ) {
+				$constraint = Assert::equalTo( $emailAddress );
+				if ( $constraint->evaluate( $this->getEmailSender( $email ), '', true ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		};
+
+		$message = sprintf( 'Waited for %d secs but no email from the sender %s has arrived', $timeout, $emailAddress );
+
+		$this->wait( $timeout )->until( $condition, $message );
 	}
 }
