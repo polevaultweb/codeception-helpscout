@@ -81,8 +81,41 @@ class HelpScout extends Module {
 			$this->fail( 'Exception: ' . $e->getMessage() );
 		}
 
+		$this->fetchedEmails = $this->sortEmails( $this->fetchedEmails );
 		// by default, work on all emails
 		$this->setCurrentInbox( $this->fetchedEmails );
+	}
+
+	/**
+	 * Sort Emails
+	 *
+	 * Sorts the inbox based on the timestamp
+	 *
+	 * @param array $emails Emails to sort
+	 *
+	 * @return array
+	 */
+	protected function sortEmails( $emails ) {
+		usort( $emails, array( $this, 'sortEmailsByCreationDatePredicate' ) );
+
+		return $emails;
+	}
+
+	/**
+	 * Get Email To
+	 *
+	 * Returns the string containing the persons included in the To field
+	 *
+	 * @param EmailConversation $emailA Email
+	 * @param EmailConversation $emailB Email
+	 *
+	 * @return int Which email should go first
+	 */
+	static function sortEmailsByCreationDatePredicate( $emailA, $emailB ) {
+		$sortKeyA = $emailA->getCreatedAt()->getTimestamp();
+		$sortKeyB = $emailB->getCreatedAt()->getTimestamp();
+
+		return ( $sortKeyA > $sortKeyB ) ? - 1 : 1;
 	}
 
 	/**
