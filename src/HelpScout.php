@@ -67,9 +67,7 @@ class HelpScout extends Module {
 
 		$this->fetchedEmails = array();
 		try {
-			$request = (new ConversationRequest)
-				->withMailbox()
-				->withThreads();
+			$request = ( new ConversationRequest )->withMailbox()->withThreads();
 
 			$filters = ( new ConversationFilters() )->withMailbox( $mailboxID )
 			                                        ->withStatus( 'open' )
@@ -77,14 +75,14 @@ class HelpScout extends Module {
 			                                        ->withSortField( 'createdAt' )
 			                                        ->withSortOrder( 'asc' );
 
-			$conversations = $this->client->conversations()->list( $filters, $request );
+			$conversations       = $this->client->conversations()->list( $filters, $request );
 			$this->fetchedEmails = $conversations->toArray();
 		} catch ( Exception $e ) {
 			$this->fail( 'Exception: ' . $e->getMessage() );
 		}
 
 		// by default, work on all emails
-		$this->setCurrentInbox( $this->fetchedEmails  );
+		$this->setCurrentInbox( $this->fetchedEmails );
 	}
 
 	/**
@@ -105,14 +103,14 @@ class HelpScout extends Module {
 	 * Main method called by the tests, providing either the currently open email or the next unread one
 	 *
 	 * @param bool $fetchNextUnread Goes to the next Unread Email
+	 *
 	 * @return mixed Returns a JSON encoded Email
 	 */
-	public function getOpenedEmail($fetchNextUnread = FALSE)
-	{
-		if($fetchNextUnread || $this->openedEmail == NULL)
-		{
+	public function getOpenedEmail( $fetchNextUnread = false ) {
+		if ( $fetchNextUnread || $this->openedEmail == null ) {
 			$this->openNextUnreadEmail();
 		}
+
 		return $this->openedEmail;
 	}
 
@@ -137,8 +135,7 @@ class HelpScout extends Module {
 	 *
 	 * Pops the most recent unread email and assigns it as the email to conduct tests on
 	 */
-	public function openNextUnreadEmail()
-	{
+	public function openNextUnreadEmail() {
 		$this->openedEmail = $this->getMostRecentUnreadEmail();
 	}
 
@@ -148,10 +145,10 @@ class HelpScout extends Module {
 	 * Returns the subject of an email
 	 *
 	 * @param EmailConversation $email Email
+	 *
 	 * @return string Subject
 	 */
-	protected function getEmailSubject($email)
-	{
+	protected function getEmailSubject( $email ) {
 		return $email->getSubject();
 	}
 
@@ -161,10 +158,10 @@ class HelpScout extends Module {
 	 * Returns the body of an email
 	 *
 	 * @param EmailConversation $email Email
+	 *
 	 * @return string Body
 	 */
-	protected function getEmailBody($email)
-	{
+	protected function getEmailBody( $email ) {
 		return $email->getThreads()->toArray()[0]->getText();
 	}
 
@@ -174,6 +171,7 @@ class HelpScout extends Module {
 	 * Returns the string containing the persons included in the To field
 	 *
 	 * @param EmailConversation $email Email
+	 *
 	 * @return string To
 	 */
 	protected function getEmailTo( $email ) {
@@ -186,22 +184,23 @@ class HelpScout extends Module {
 	 * Returns the string containing the persons included in the CC field
 	 *
 	 * @param EmailConversation $email Email
+	 *
 	 * @return string CC
 	 */
-	protected function getEmailCC($email)
-	{
+	protected function getEmailCC( $email ) {
 		return implode( ',', $email->getCC() );
 	}
+
 	/**
 	 * Get Email BCC
 	 *
 	 * Returns the string containing the persons included in the BCC field
 	 *
 	 * @param EmailConversation $email Email
+	 *
 	 * @return string BCC
 	 */
-	protected function getEmailBCC($email)
-	{
+	protected function getEmailBCC( $email ) {
 		return implode( ',', $email->getBCC() );
 	}
 
@@ -211,10 +210,10 @@ class HelpScout extends Module {
 	 * Returns the string containing the sender of the email
 	 *
 	 * @param EmailConversation $email Email
+	 *
 	 * @return string Sender
 	 */
-	protected function getEmailSender($email)
-	{
+	protected function getEmailSender( $email ) {
 		return $email->getCustomer()->getFirstEmail();
 	}
 
