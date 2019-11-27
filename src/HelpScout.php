@@ -60,7 +60,7 @@ class HelpScout extends Module {
 	 *
 	 * Accessible from tests, fetches all emails
 	 *
-	 * @param null $mailboxID
+	 * @param int|null $mailboxID
 	 */
 	public function fetchEmails( $mailboxID = null ) {
 
@@ -78,7 +78,7 @@ class HelpScout extends Module {
 
 			$conversations       = $this->client->conversations()->list( $filters, $request );
 			$this->fetchedEmails = $conversations->toArray();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$this->fail( 'Exception: ' . $e->getMessage() );
 		}
 
@@ -271,7 +271,7 @@ class HelpScout extends Module {
 	/**
 	 * Wait until an email to be received from a specific sender email address.
 	 *
-	 * @param  int   $mailboxID
+	 * @param int    $mailboxID
 	 * @param string $emailAddress
 	 * @param int    $timeout
 	 */
